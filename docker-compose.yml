@@ -1,0 +1,95 @@
+# =============================================
+# GESAP - Docker Compose
+# Levanta PostgreSQL + los 3 servicios
+# Ejecutar: docker-compose up -d o docker compose up --build
+# =============================================
+
+version: '3.8'
+
+services:
+  # ---- BASE DE DATOS ----
+  postgres:
+    image: postgres:15-alpine
+    container_name: gesap-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: gesap_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - gesap-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---- API PRINCIPAL (puerto 3000) ----
+  gesap-api:
+    build: ./gesap-api
+    container_name: gesap-api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:admin@postgres:5432/gesap_db?schema=public
+      JWT_SECRET: x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r
+      JWT_EXPIRES_IN: 24h
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gesap-network
+
+  # ---- SERVICIO DE AUDITORIA (puerto 3001) ----
+  gesap-auditor:
+    build: ./gesap-auditor
+    container_name: gesap-auditor
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:admin@postgres:5432/gesap_auditor_db?schema=public
+      JWT_SECRET: x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r
+      JWT_EXPIRES_IN: 24h
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gesap-network
+
+  # ---- PORTAL DE PACIENTES (puerto 3002) ----
+  gesap-patient-portal:
+    build: ./gesap-patient-portal
+    container_name: gesap-patient-portal
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:admin@postgres:5432/gesap_db?schema=public
+      JWT_SECRET: x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r
+      JWT_EXPIRES_IN: 24h
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gesap-network
+
+volumes:
+  postgres_data:
+
+
+networks:
+  gesap-network:
+    driver: bridge
