@@ -64,6 +64,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      gesap-api:
+        condition: service_started
     networks:
       - gesap-network
 
@@ -83,12 +85,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      gesap-api:
+        condition: service_started
     networks:
       - gesap-network
 
 volumes:
   postgres_data:
-
 
 networks:
   gesap-network:

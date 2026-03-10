@@ -1,0 +1,1847 @@
+{
+  "info": {
+    "_postman_id": "409ea5f9-2bed-46db-85de-002129b25134",
+    "name": "GESAP - Coleccion Completa",
+    "description": "Coleccion actualizada con nombre completo, 5 pacientes de prueba, contactos de emergencia y registro libre",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48513078",
+    "_collection_link": "https://go.postman.co/collection/48513078-409ea5f9-2bed-46db-85de-002129b25134?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Auth",
+      "item": [
+        {
+          "name": "Login Auditor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j=pm.response.json();if(j.token){pm.collectionVariables.set('TOKEN',j.token);}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"auditor@gesap.gt\",\n  \"password\": \"GESAP2024!\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/auth/login",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Doctor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j=pm.response.json();if(j.token){pm.collectionVariables.set('DOCTOR_TOKEN',j.token);}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dr.lopez@gesap.gt\",\n  \"password\": \"Doctor2024!\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/auth/login",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/auth/profile",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "auth",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Roles",
+      "item": [
+        {
+          "name": "Listar Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/roles",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Rol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"RECEPCIONISTA\",\n  \"description\": \"Recepcion y registro de pacientes\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/roles",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Rol 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/roles/1",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "roles",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Rol",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Descripcion actualizada\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/roles/6",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "roles",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Rol",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/roles/6",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "roles",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Usuarios",
+      "item": [
+        {
+          "name": "Crear Enfermero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"enf.ramirez@gesap.gt\",\n  \"password\": \"Enfermero2024!\",\n  \"firstName\": \"Maria\",\n  \"lastName\": \"Ramirez\",\n  \"roleId\": 5\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/users",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Paramedico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"param.gomez@gesap.gt\",\n  \"password\": \"Paramedico2024!\",\n  \"firstName\": \"Luis\",\n  \"lastName\": \"Gomez\",\n  \"roleId\": 3\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/users",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/users",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Usuario 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/users/2",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Carlos Eduardo\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/users/2",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Activo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/users/3/toggle-active",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users",
+                "3",
+                "toggle-active"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Contrasena",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Doctor2024!\",\n  \"newPassword\": \"NuevaPass2024!\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/users/2/change-password",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users",
+                "2",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Pacientes (nombre completo)",
+      "item": [
+        {
+          "name": "Crear Paciente (3 nombres)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"1234567890123\",\n  \"firstName\": \"Jose\",\n  \"secondName\": \"Miguel\",\n  \"thirdName\": \"Antonio\",\n  \"firstLastName\": \"Hernandez\",\n  \"secondLastName\": \"Villatoro\",\n  \"birthDate\": \"1992-08-25\",\n  \"sex\": \"MASCULINO\",\n  \"bloodType\": \"B_POSITIVO\",\n  \"phone\": \"55112233\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Paciente (1 nombre)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"9876543210123\",\n  \"firstName\": \"Lucia\",\n  \"firstLastName\": \"Mendez\",\n  \"secondLastName\": \"Torres\",\n  \"birthDate\": \"1998-02-14\",\n  \"sex\": \"FEMENINO\",\n  \"bloodType\": \"AB_NEGATIVO\",\n  \"phone\": \"33998877\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Paciente 1 (seed)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/1",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por DPI (Emergencia)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/dpi/2987654321001",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "dpi",
+                "2987654321001"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Paciente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"55999888\",\n  \"address\": \"Zona 14, Guatemala\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/1",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Paciente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/7",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Contactos Emergencia (API)",
+      "item": [
+        {
+          "name": "Crear Contacto 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"fullName\": \"Maria Garcia de Perez\",\n  \"phone\": \"55654321\",\n  \"relationship\": \"Madre\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/emergency-contacts",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Contacto 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"fullName\": \"Pedro Perez Lopez\",\n  \"phone\": \"44332211\",\n  \"relationship\": \"Padre\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/emergency-contacts",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Contacto 3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"fullName\": \"Ana Perez Garcia\",\n  \"phone\": \"55887766\",\n  \"relationship\": \"Hermana\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/emergency-contacts",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Contactos Paciente 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/1/emergency-contacts",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Editar Contacto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"55111111\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/emergency-contacts/1",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "emergency-contacts",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Contacto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/emergency-contacts/3",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "emergency-contacts",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Alergias",
+      "item": [
+        {
+          "name": "Crear Alergia SEVERA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"substance\": \"Penicilina\",\n  \"type\": \"MEDICATION\",\n  \"severity\": \"SEVERE\",\n  \"notes\": \"Reaccion anafilactica documentada\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/allergies",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "allergies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Alergia Alimento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"substance\": \"Mani\",\n  \"type\": \"FOOD\",\n  \"severity\": \"MODERATE\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/allergies",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "allergies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Alergias Paciente 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/1/allergies",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "allergies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Alergia",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/allergies/2",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "allergies",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Expedientes Medicos",
+      "item": [
+        {
+          "name": "Crear Expediente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{DOCTOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"diagnosis\": \"Hipertension arterial grado 1\",\n  \"notes\": \"Control mensual recomendado\",\n  \"vitalSigns\": {\n    \"weight\": 78,\n    \"height\": 170,\n    \"blood_pressure\": \"140/90\",\n    \"temperature\": 36.6,\n    \"heart_rate\": 82\n  }\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/medical-records",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "medical-records"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Expedientes Paciente 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/1/medical-records",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "medical-records"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Tratamientos",
+      "item": [
+        {
+          "name": "Crear Tratamiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{DOCTOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"name\": \"Losartan 50mg\",\n  \"description\": \"1 tableta cada 24 horas\",\n  \"startDate\": \"2024-03-01\",\n  \"endDate\": \"2024-06-01\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients/treatments",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "treatments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Tratamientos Paciente 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/1/treatments",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "1",
+                "treatments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Tratamiento",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{API_URL}}/patients/treatments/1/deactivate",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients",
+                "treatments",
+                "1",
+                "deactivate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "09 - Auditor",
+      "item": [
+        {
+          "name": "Validar Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{AUDITOR_URL}}/auth/validate",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "auth",
+                "validate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{AUDITOR_URL}}/audit-logs",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "audit-logs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen Auditoria",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{AUDITOR_URL}}/audit-logs/summary",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "audit-logs",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Horario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 2,\n  \"dayOfWeek\": 1,\n  \"startTime\": \"08:00\",\n  \"endTime\": \"16:00\"\n}"
+            },
+            "url": {
+              "raw": "{{AUDITOR_URL}}/schedules",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "schedules"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Horarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{AUDITOR_URL}}/schedules",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "schedules"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Dispositivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceName\": \"PC Enfermeria 1\",\n  \"macAddress\": \"AA:BB:CC:DD:EE:01\",\n  \"ipAddress\": \"192.168.1.100\",\n  \"location\": \"Segundo piso\"\n}"
+            },
+            "url": {
+              "raw": "{{AUDITOR_URL}}/devices",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "devices"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Dispositivos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{AUDITOR_URL}}/devices",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "devices"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10 - Portal Pacientes",
+      "item": [
+        {
+          "name": "Registro Paciente 1 (Juan)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"2987654321001\",\n  \"email\": \"juan.perez@gmail.com\",\n  \"password\": \"MiPassword1\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/register",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registro Paciente 2 (Maria)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"3012345678002\",\n  \"email\": \"maria.lopez@gmail.com\",\n  \"password\": \"MiPassword2\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/register",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registro Paciente 3 (Pedro)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"2765432109003\",\n  \"email\": \"pedro.ramirez@gmail.com\",\n  \"password\": \"MiPassword3\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/register",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registro Paciente 4 (Ana)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"3198765432004\",\n  \"email\": \"ana.morales@gmail.com\",\n  \"password\": \"MiPassword4\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/register",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registro Paciente 5 (Diego)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"2654321098005\",\n  \"email\": \"diego.santos@gmail.com\",\n  \"password\": \"MiPassword5\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/register",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Pendientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/pending",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar Cuenta 1",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/approve/1",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "approve",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar Cuenta 2",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/approve/2",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "approve",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar Cuenta 3",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/approve/3",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "approve",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar Cuenta 4",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/approve/4",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "approve",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar Cuenta 5",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/approve/5",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "approve",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Juan (Portal)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j=pm.response.json();if(j.token){pm.collectionVariables.set('PORTAL_TOKEN',j.token);}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan.perez@gmail.com\",\n  \"password\": \"MiPassword1\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/auth/login",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mi Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{PORTAL_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{PORTAL_URL}}/profile",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Contacto Emergencia 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{PORTAL_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Maria Garcia de Perez\",\n  \"phone\": \"55654321\",\n  \"relationship\": \"Madre\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/emergency-contacts",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Contacto Emergencia 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{PORTAL_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Pedro Perez\",\n  \"phone\": \"44332211\",\n  \"relationship\": \"Padre\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/emergency-contacts",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Mis Contactos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{PORTAL_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{PORTAL_URL}}/emergency-contacts",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "emergency-contacts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Editar Contacto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{PORTAL_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"55111111\"\n}"
+            },
+            "url": {
+              "raw": "{{PORTAL_URL}}/emergency-contacts/1",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "emergency-contacts",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Contacto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{PORTAL_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{PORTAL_URL}}/emergency-contacts/2",
+              "host": [
+                "{{PORTAL_URL}}"
+              ],
+              "path": [
+                "emergency-contacts",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "11 - Validaciones (Errores)",
+      "item": [
+        {
+          "name": "Login sin email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/auth/login",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Paciente DPI invalido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dpi\": \"123\",\n  \"firstName\": \"X\",\n  \"firstLastName\": \"\",\n  \"secondLastName\": \"\",\n  \"birthDate\": \"fecha-mala\",\n  \"sex\": \"OTRO\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/patients",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Password debil",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\",\n  \"password\": \"123\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"Test\",\n  \"roleId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/users",
+              "host": [
+                "{{API_URL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MAC invalida",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceName\": \"Test\",\n  \"macAddress\": \"no-es-mac\"\n}"
+            },
+            "url": {
+              "raw": "{{AUDITOR_URL}}/devices",
+              "host": [
+                "{{AUDITOR_URL}}"
+              ],
+              "path": [
+                "devices"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "API_URL",
+      "value": "http://localhost:3000/gesap/v1"
+    },
+    {
+      "key": "AUDITOR_URL",
+      "value": "http://localhost:3001/gesap-auditor/v1"
+    },
+    {
+      "key": "PORTAL_URL",
+      "value": "http://localhost:3002/gesap-portal/v1"
+    },
+    {
+      "key": "TOKEN",
+      "value": ""
+    },
+    {
+      "key": "DOCTOR_TOKEN",
+      "value": ""
+    },
+    {
+      "key": "PORTAL_TOKEN",
+      "value": ""
+    }
+  ]
+}
