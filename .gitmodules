@@ -1,0 +1,9 @@
+[submodule "gesap-api"]
+	path = gesap-api
+	url = https://github.com/marcss-bnajera/gesap-api.git
+[submodule "gesap-auditor"]
+	path = gesap-auditor
+	url = https://github.com/marcss-bnajera/gesap-auditor.git
+[submodule "gesap-patient-portal"]
+	path = gesap-patient-portal
+	url = https://github.com/marcss-bnajera/gesap-patient-portal.git
