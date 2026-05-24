@@ -1,0 +1,1100 @@
+{
+	"info": {
+		"_postman_id": "gesap-complete-collection",
+		"name": "GESAP — Sistema Completo",
+		"description": "Colección completa del Sistema de Gestión de Atención a Pacientes (MSPAS Guatemala).\n\nServicios:\n- gesap-api (puerto 3000): Core\n- gesap-auditor (puerto 3001): Panel de administración\n- gesap-patient-portal (puerto 3002): Portal de pacientes\n\nSwagger UI:\n- http://localhost:3000/gesap/v1/docs\n- http://localhost:3001/gesap-auditor/v1/docs\n- http://localhost:3002/gesap-portal/v1/docs\n\nUsuarios de prueba:\n- superauditor@gesap.gt / GESAP2024!\n- auditor@gesap.gt / GESAP2024!\n- dr.lopez@gesap.gt / Doctor2024!\n\nFlujo recomendado:\n1. Login (gesap-api) → guardar token en variable\n2. Crear paciente\n3. Crear emergencia\n4. Asignar y completar emergencia",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "api_url",
+			"value": "http://localhost:3000/gesap/v1",
+			"type": "string"
+		},
+		{
+			"key": "auditor_url",
+			"value": "http://localhost:3001/gesap-auditor/v1",
+			"type": "string"
+		},
+		{
+			"key": "portal_url",
+			"value": "http://localhost:3002/gesap-portal/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "auditor_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "portal_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "01. gesap-api — Auth",
+			"item": [
+				{
+					"name": "Login como SUPER_AUDITOR",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.access_token) {",
+									"    pm.collectionVariables.set('token', json.access_token);",
+									"    pm.collectionVariables.set('auditor_token', json.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"superauditor@gesap.gt\",\n  \"password\": \"GESAP2024!\"\n}"
+						},
+						"url": "{{api_url}}/auth/login"
+					}
+				},
+				{
+					"name": "Login como AUDITOR (HSJD)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.access_token) {",
+									"    pm.collectionVariables.set('token', json.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"auditor@gesap.gt\",\n  \"password\": \"GESAP2024!\"\n}"
+						},
+						"url": "{{api_url}}/auth/login"
+					}
+				},
+				{
+					"name": "Login como DOCTOR",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.access_token) {",
+									"    pm.collectionVariables.set('token', json.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"dr.lopez@gesap.gt\",\n  \"password\": \"Doctor2024!\"\n}"
+						},
+						"url": "{{api_url}}/auth/login"
+					}
+				},
+				{
+					"name": "Ver perfil autenticado",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/auth/profile"
+					}
+				}
+			]
+		},
+		{
+			"name": "02. gesap-api — Users",
+			"item": [
+				{
+					"name": "Listar usuarios",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/users"
+					}
+				},
+				{
+					"name": "Crear usuario (DOCTOR)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"nuevo.doctor@gesap.gt\",\n  \"password\": \"Doctor2024!\",\n  \"firstName\": \"Roberto\",\n  \"lastName\": \"Mendez\",\n  \"roleId\": 3,\n  \"hospitalId\": 1\n}"
+						},
+						"url": "{{api_url}}/users"
+					}
+				},
+				{
+					"name": "Crear ASISTENTE_PREHOSPITALARIO",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"ambulancia01@gesap.gt\",\n  \"password\": \"Ambulancia2024!\",\n  \"firstName\": \"Pedro\",\n  \"lastName\": \"Xicay\",\n  \"roleId\": 4,\n  \"fleetId\": \"FLOTA-GT-01\"\n}"
+						},
+						"url": "{{api_url}}/users"
+					}
+				},
+				{
+					"name": "Obtener usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/users/1"
+					}
+				},
+				{
+					"name": "Actualizar usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Lopez Actualizado\"\n}"
+						},
+						"url": "{{api_url}}/users/3"
+					}
+				},
+				{
+					"name": "Toggle activo/inactivo",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/users/3/toggle-active"
+					}
+				},
+				{
+					"name": "Cambiar contraseña",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"Doctor2024!\",\n  \"newPassword\": \"Doctor2024New!\"\n}"
+						},
+						"url": "{{api_url}}/users/3/change-password"
+					}
+				}
+			]
+		},
+		{
+			"name": "03. gesap-api — Roles",
+			"item": [
+				{
+					"name": "Listar roles",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/roles"
+					}
+				},
+				{
+					"name": "Obtener rol por ID",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/roles/1"
+					}
+				}
+			]
+		},
+		{
+			"name": "04. gesap-api — Patients",
+			"item": [
+				{
+					"name": "Crear paciente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dpi\": \"2893459812345\",\n  \"firstName\": \"Juan\",\n  \"secondName\": \"Carlos\",\n  \"firstLastName\": \"Garcia\",\n  \"secondLastName\": \"Perez\",\n  \"birthDate\": \"1990-05-15\",\n  \"sex\": \"MASCULINO\",\n  \"bloodType\": \"O_POSITIVO\",\n  \"phone\": \"55551234\",\n  \"address\": \"Zona 12, Ciudad de Guatemala\"\n}"
+						},
+						"url": "{{api_url}}/patients"
+					}
+				},
+				{
+					"name": "Listar pacientes",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients"
+					}
+				},
+				{
+					"name": "Obtener paciente por ID",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/1"
+					}
+				},
+				{
+					"name": "Buscar paciente por DPI",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/dpi/2893459812345"
+					}
+				},
+				{
+					"name": "Actualizar paciente",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"55559999\",\n  \"address\": \"Zona 10, Ciudad de Guatemala\"\n}"
+						},
+						"url": "{{api_url}}/patients/1"
+					}
+				},
+				{
+					"name": "Agregar contacto de emergencia",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": 1,\n  \"fullName\": \"Maria Garcia\",\n  \"phone\": \"55559999\",\n  \"relationship\": \"Madre\"\n}"
+						},
+						"url": "{{api_url}}/patients/emergency-contacts"
+					}
+				},
+				{
+					"name": "Ver contactos de emergencia del paciente",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/1/emergency-contacts"
+					}
+				},
+				{
+					"name": "Registrar alergia",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": 1,\n  \"substance\": \"Penicilina\",\n  \"type\": \"MEDICATION\",\n  \"severity\": \"SEVERE\",\n  \"notes\": \"Reaccion anafilactica conocida\"\n}"
+						},
+						"url": "{{api_url}}/patients/allergies"
+					}
+				},
+				{
+					"name": "Ver alergias del paciente",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/1/allergies"
+					}
+				},
+				{
+					"name": "Crear expediente médico (como DOCTOR)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": 1,\n  \"diagnosis\": \"Hipertension arterial grado I\",\n  \"notes\": \"Paciente con antecedentes familiares de HTA\",\n  \"vitalSigns\": {\n    \"weight\": 75,\n    \"height\": 170,\n    \"blood_pressure\": \"140/90\",\n    \"temperature\": 36.5,\n    \"heart_rate\": 88\n  }\n}"
+						},
+						"url": "{{api_url}}/patients/medical-records"
+					}
+				},
+				{
+					"name": "Ver expedientes médicos del paciente",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/1/medical-records"
+					}
+				},
+				{
+					"name": "Crear tratamiento (como DOCTOR)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": 1,\n  \"name\": \"Losartan 50mg\",\n  \"description\": \"Una tableta cada 24 horas en la manana\",\n  \"startDate\": \"2024-06-01\",\n  \"endDate\": \"2025-06-01\"\n}"
+						},
+						"url": "{{api_url}}/patients/treatments"
+					}
+				},
+				{
+					"name": "Ver tratamientos del paciente",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/1/treatments"
+					}
+				},
+				{
+					"name": "Desactivar tratamiento",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/patients/treatments/1/deactivate"
+					}
+				}
+			]
+		},
+		{
+			"name": "05. gesap-api — Emergencies",
+			"item": [
+				{
+					"name": "Crear emergencia (ASISTENTE_PREHOSPITALARIO)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": 1,\n  \"hospitalDestinationId\": 1,\n  \"primaryAssessment\": {\n    \"airway\": \"permeable\",\n    \"breathing\": \"normal\",\n    \"circulation\": \"pulso_presente\",\n    \"disability\": \"consciente\",\n    \"exposure\": \"sin_lesiones_visibles\"\n  },\n  \"secondaryAssessment\": {\n    \"symptoms\": \"dolor_toracico\",\n    \"allergies\": \"penicilina\",\n    \"medications\": \"losartan\",\n    \"history\": \"HTA\",\n    \"events\": \"inicio_subito\"\n  },\n  \"notes\": \"Paciente refiere dolor toracico intenso de 30 minutos de evolución\",\n  \"transferDate\": \"2024-06-15T14:30:00.000Z\"\n}"
+						},
+						"url": "{{api_url}}/emergencies"
+					}
+				},
+				{
+					"name": "Listar emergencias (AUDITOR)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/emergencies"
+					}
+				},
+				{
+					"name": "Listar emergencias — filtrar por status",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": {
+							"raw": "{{api_url}}/emergencies?status=PENDING",
+							"host": ["{{api_url}}"],
+							"path": ["emergencies"],
+							"query": [{"key": "status", "value": "PENDING"}]
+						}
+					}
+				},
+				{
+					"name": "Emergencias pendientes del hospital (ASISTENTE_RECEPCION_CLINICA)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/emergencies/pending/1"
+					}
+				},
+				{
+					"name": "Obtener emergencia por ID",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/emergencies/1"
+					}
+				},
+				{
+					"name": "Actualizar emergencia (solo PENDING)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Paciente estabilizado, presion arterial controlada\",\n  \"primaryAssessment\": {\n    \"airway\": \"permeable\",\n    \"breathing\": \"dificultad_leve\"\n  }\n}"
+						},
+						"url": "{{api_url}}/emergencies/1"
+					}
+				},
+				{
+					"name": "Asignar emergencia (ASISTENTE_RECEPCION_CLINICA)",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/emergencies/1/assign"
+					}
+				},
+				{
+					"name": "Completar emergencia (ASISTENTE_RECEPCION_CLINICA)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"completionRecord\": {\n    \"outcome\": \"estable\",\n    \"handoff_to\": \"Dr. Lopez\",\n    \"notes\": \"Paciente entregado en urgencias, presion controlada\",\n    \"vital_signs_on_arrival\": {\n      \"pulse\": 80,\n      \"bp\": \"130/85\",\n      \"temperature\": 36.8\n    }\n  }\n}"
+						},
+						"url": "{{api_url}}/emergencies/1/complete"
+					}
+				},
+				{
+					"name": "Obtener constancia de emergencia",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/emergencies/1/constancia"
+					}
+				}
+			]
+		},
+		{
+			"name": "06. gesap-api — Unidentified Patients",
+			"item": [
+				{
+					"name": "Crear paciente sin identificar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"estimatedAge\": 35,\n  \"sex\": \"MASCULINO\",\n  \"hatDescription\": \"Gorra roja con logo blanco\",\n  \"shirtDescription\": \"Camisa azul manga larga\",\n  \"pantsDescription\": \"Pantalon gris de mezclilla\",\n  \"shoesDescription\": \"Tenis blancos\",\n  \"additionalNotes\": \"Tatuaje en brazo derecho\",\n  \"hospitalId\": 1,\n  \"transferDate\": \"2024-06-15T15:00:00.000Z\"\n}"
+						},
+						"url": "{{api_url}}/unidentified-patients"
+					}
+				},
+				{
+					"name": "Listar pacientes sin identificar",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/unidentified-patients"
+					}
+				},
+				{
+					"name": "Obtener paciente sin identificar por ID",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+						"url": "{{api_url}}/unidentified-patients/1"
+					}
+				},
+				{
+					"name": "Identificar paciente",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": 1\n}"
+						},
+						"url": "{{api_url}}/unidentified-patients/1/identify"
+					}
+				}
+			]
+		},
+		{
+			"name": "07. gesap-auditor — Auth",
+			"item": [
+				{
+					"name": "Validar token (auditor)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/auth/validate"
+					}
+				}
+			]
+		},
+		{
+			"name": "08. gesap-auditor — Dashboard",
+			"item": [
+				{
+					"name": "Estadísticas del dashboard",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/dashboard/stats"
+					}
+				}
+			]
+		},
+		{
+			"name": "09. gesap-auditor — Hospitals",
+			"item": [
+				{
+					"name": "Listar todos los hospitales",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/hospitals"
+					}
+				},
+				{
+					"name": "Listar hospitales activos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/hospitals/active"
+					}
+				},
+				{
+					"name": "Obtener hospital por ID",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/hospitals/1"
+					}
+				},
+				{
+					"name": "Crear hospital (SUPER_AUDITOR)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{auditor_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"HNTEST\",\n  \"name\": \"Hospital Nacional de Prueba\",\n  \"level\": \"DEPARTAMENTAL\",\n  \"department\": \"Guatemala\",\n  \"municipality\": \"Guatemala\",\n  \"address\": \"Zona 1, Ciudad de Guatemala\",\n  \"phone\": \"22321234\"\n}"
+						},
+						"url": "{{auditor_url}}/hospitals"
+					}
+				},
+				{
+					"name": "Actualizar hospital (SUPER_AUDITOR)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{auditor_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"HNTEST\",\n  \"name\": \"Hospital Nacional de Prueba Actualizado\",\n  \"level\": \"DEPARTAMENTAL\",\n  \"department\": \"Guatemala\",\n  \"municipality\": \"Guatemala\"\n}"
+						},
+						"url": "{{auditor_url}}/hospitals/45"
+					}
+				},
+				{
+					"name": "Activar/desactivar hospital (SUPER_AUDITOR)",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/hospitals/45/toggle"
+					}
+				}
+			]
+		},
+		{
+			"name": "10. gesap-auditor — Users",
+			"item": [
+				{
+					"name": "Listar usuarios del hospital",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/users"
+					}
+				},
+				{
+					"name": "Estado de disponibilidad recepcionistas",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/users/reception-availability"
+					}
+				},
+				{
+					"name": "Crear usuario desde auditor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{auditor_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"recepcion01@gesap.gt\",\n  \"password\": \"Recep2024!\",\n  \"firstName\": \"Ana\",\n  \"lastName\": \"Cifuentes\",\n  \"roleId\": 5,\n  \"hospitalId\": 1,\n  \"availabilityStatus\": \"AVAILABLE\"\n}"
+						},
+						"url": "{{auditor_url}}/users"
+					}
+				},
+				{
+					"name": "Toggle activo usuario",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/users/5/toggle-active"
+					}
+				}
+			]
+		},
+		{
+			"name": "11. gesap-auditor — Emergencies (monitor)",
+			"item": [
+				{
+					"name": "Emergencias PENDING (monitoreo)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/emergencies/pending"
+					}
+				},
+				{
+					"name": "Todas las emergencias",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/emergencies"
+					}
+				},
+				{
+					"name": "Detalle de emergencia",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/emergencies/1"
+					}
+				}
+			]
+		},
+		{
+			"name": "12. gesap-auditor — Patient Accounts",
+			"item": [
+				{
+					"name": "Cuentas pendientes de aprobación",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/patient-accounts/pending"
+					}
+				},
+				{
+					"name": "Todas las cuentas",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/patient-accounts"
+					}
+				},
+				{
+					"name": "Aprobar cuenta",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/patient-accounts/1/approve"
+					}
+				},
+				{
+					"name": "Rechazar cuenta",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/patient-accounts/1/reject"
+					}
+				}
+			]
+		},
+		{
+			"name": "13. gesap-auditor — Sessions",
+			"item": [
+				{
+					"name": "Sesiones activas",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/sessions/active"
+					}
+				},
+				{
+					"name": "Sesiones de un usuario",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/sessions/user/2"
+					}
+				}
+			]
+		},
+		{
+			"name": "14. gesap-auditor — Devices",
+			"item": [
+				{
+					"name": "Listar dispositivos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/devices"
+					}
+				},
+				{
+					"name": "Dispositivos activos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/devices/active"
+					}
+				},
+				{
+					"name": "Registrar dispositivo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{auditor_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"deviceName\": \"Computadora Recepcion 1\",\n  \"macAddress\": \"AA:BB:CC:DD:EE:FF\",\n  \"ipAddress\": \"192.168.1.100\",\n  \"location\": \"Area de recepcion ventanilla 1\"\n}"
+						},
+						"url": "{{auditor_url}}/devices"
+					}
+				},
+				{
+					"name": "Actualizar dispositivo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{auditor_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isActive\": false,\n  \"location\": \"Bodega\"\n}"
+						},
+						"url": "{{auditor_url}}/devices/1"
+					}
+				}
+			]
+		},
+		{
+			"name": "15. gesap-auditor — Schedules",
+			"item": [
+				{
+					"name": "Listar horarios",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/schedules"
+					}
+				},
+				{
+					"name": "Horarios de un usuario",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/schedules/user/2"
+					}
+				},
+				{
+					"name": "Crear horario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{auditor_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 2,\n  \"dayOfWeek\": 1,\n  \"startTime\": \"08:00\",\n  \"endTime\": \"17:00\"\n}"
+						},
+						"url": "{{auditor_url}}/schedules"
+					}
+				}
+			]
+		},
+		{
+			"name": "16. gesap-auditor — Audit Logs",
+			"item": [
+				{
+					"name": "Listar audit logs",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/audit-logs"
+					}
+				},
+				{
+					"name": "Audit logs — filtrar por accion y fecha",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": {
+							"raw": "{{auditor_url}}/audit-logs?action=LOGIN&startDate=2024-06-01&endDate=2024-06-30",
+							"host": ["{{auditor_url}}"],
+							"path": ["audit-logs"],
+							"query": [
+								{"key": "action", "value": "LOGIN"},
+								{"key": "startDate", "value": "2024-06-01"},
+								{"key": "endDate", "value": "2024-06-30"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Resumen de auditoría",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{auditor_token}}"}],
+						"url": "{{auditor_url}}/audit-logs/summary"
+					}
+				}
+			]
+		},
+		{
+			"name": "17. gesap-portal — Auth",
+			"item": [
+				{
+					"name": "Registrar paciente",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dpi\": \"2893459812345\",\n  \"email\": \"juan.garcia@email.com\",\n  \"password\": \"MiPass2024!\"\n}"
+						},
+						"url": "{{portal_url}}/auth/register"
+					}
+				},
+				{
+					"name": "Login paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.access_token) {",
+									"    pm.collectionVariables.set('portal_token', json.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"juan.garcia@email.com\",\n  \"password\": \"MiPass2024!\"\n}"
+						},
+						"url": "{{portal_url}}/auth/login"
+					}
+				},
+				{
+					"name": "Cuentas pendientes (desde portal)",
+					"request": {
+						"method": "GET",
+						"url": "{{portal_url}}/auth/pending"
+					}
+				},
+				{
+					"name": "Aprobar cuenta desde portal",
+					"request": {
+						"method": "PATCH",
+						"url": "{{portal_url}}/auth/approve/1"
+					}
+				}
+			]
+		},
+		{
+			"name": "18. gesap-portal — Profile",
+			"item": [
+				{
+					"name": "Ver perfil completo",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/profile"
+					}
+				},
+				{
+					"name": "Actualizar perfil",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{portal_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"55551234\",\n  \"address\": \"Zona 10, Ciudad de Guatemala\"\n}"
+						},
+						"url": "{{portal_url}}/profile"
+					}
+				}
+			]
+		},
+		{
+			"name": "19. gesap-portal — History",
+			"item": [
+				{
+					"name": "Expedientes médicos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/history/medical-records"
+					}
+				},
+				{
+					"name": "Tratamientos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/history/treatments"
+					}
+				},
+				{
+					"name": "Alergias registradas",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/history/allergies"
+					}
+				}
+			]
+		},
+		{
+			"name": "20. gesap-portal — My Emergencies",
+			"item": [
+				{
+					"name": "Mis emergencias",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/my-emergencies"
+					}
+				},
+				{
+					"name": "Detalle de emergencia",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/my-emergencies/1"
+					}
+				},
+				{
+					"name": "Constancia de emergencia",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/my-emergencies/1/constancia"
+					}
+				}
+			]
+		},
+		{
+			"name": "21. gesap-portal — Emergency Contacts",
+			"item": [
+				{
+					"name": "Ver mis contactos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/emergency-contacts"
+					}
+				},
+				{
+					"name": "Agregar contacto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{portal_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Maria Garcia\",\n  \"phone\": \"55559999\",\n  \"relationship\": \"Madre\"\n}"
+						},
+						"url": "{{portal_url}}/emergency-contacts"
+					}
+				},
+				{
+					"name": "Actualizar contacto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{portal_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"55558888\",\n  \"relationship\": \"Madre\"\n}"
+						},
+						"url": "{{portal_url}}/emergency-contacts/1"
+					}
+				},
+				{
+					"name": "Eliminar contacto",
+					"request": {
+						"method": "DELETE",
+						"header": [{"key": "Authorization", "value": "Bearer {{portal_token}}"}],
+						"url": "{{portal_url}}/emergency-contacts/1"
+					}
+				}
+			]
+		}
+	]
+}
