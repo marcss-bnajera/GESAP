@@ -1,7 +1,18 @@
 # =============================================
 # GESAP - Docker Compose
-# Levanta PostgreSQL + los 3 servicios
+# Levanta PostgreSQL + 3 backends + 4 frontends
 # Ejecutar: docker compose up --build -d
+# =============================================
+#
+# Puertos del HOST (acceso desde tu PC):
+#   PostgreSQL  → localhost:5433
+#   gesap-api   → localhost:3100
+#   gesap-auditor          → localhost:3101
+#   gesap-patient-portal   → localhost:3102
+#   Panel Admin    → localhost:4000
+#   Portal Auditor → localhost:4001
+#   Portal Clínico → localhost:4002
+#   Portal Paciente→ localhost:4003
 # =============================================
 
 services:
@@ -27,13 +38,13 @@ services:
       timeout: 5s
       retries: 5
 
-  # ---- API PRINCIPAL (puerto 3000) ----
+  # ---- API PRINCIPAL (interno: 3000 | host: 3100) ----
   gesap-api:
     build: ./gesap-api
     container_name: gesap-api
     restart: always
     ports:
-      - "3000:3000"
+      - "3100:3000"
     environment:
       PORT: 3000
       NODE_ENV: production
@@ -46,13 +57,13 @@ services:
     networks:
       - gesap-network
 
-  # ---- SERVICIO DE AUDITORIA (puerto 3001) ----
+  # ---- SERVICIO DE AUDITORIA (interno: 3001 | host: 3101) ----
   gesap-auditor:
     build: ./gesap-auditor
     container_name: gesap-auditor
     restart: always
     ports:
-      - "3001:3001"
+      - "3101:3001"
     environment:
       PORT: 3001
       NODE_ENV: production
@@ -67,13 +78,13 @@ services:
     networks:
       - gesap-network
 
-  # ---- PORTAL DE PACIENTES (puerto 3002) ----
+  # ---- PORTAL DE PACIENTES BACKEND (interno: 3002 | host: 3102) ----
   gesap-patient-portal:
     build: ./gesap-patient-portal
     container_name: gesap-patient-portal
     restart: always
     ports:
-      - "3002:3002"
+      - "3102:3002"
     environment:
       PORT: 3002
       NODE_ENV: production
@@ -85,6 +96,56 @@ services:
         condition: service_healthy
       gesap-api:
         condition: service_started
+    networks:
+      - gesap-network
+
+  # ---- FRONTEND: PANEL ADMIN (puerto 4000) ----
+  client-admin:
+    build: ./client-admin-gesap
+    container_name: gesap-client-admin
+    restart: always
+    ports:
+      - "4000:80"
+    depends_on:
+      - gesap-api
+      - gesap-auditor
+    networks:
+      - gesap-network
+
+  # ---- FRONTEND: PORTAL AUDITOR (puerto 4001) ----
+  client-auditor:
+    build: ./fronted-audtior-gesap
+    container_name: gesap-client-auditor
+    restart: always
+    ports:
+      - "4001:80"
+    depends_on:
+      - gesap-api
+      - gesap-auditor
+    networks:
+      - gesap-network
+
+  # ---- FRONTEND: PORTAL CLINICO (puerto 4002) ----
+  client-api:
+    build: ./client-api-gesap
+    container_name: gesap-client-api
+    restart: always
+    ports:
+      - "4002:80"
+    depends_on:
+      - gesap-api
+    networks:
+      - gesap-network
+
+  # ---- FRONTEND: PORTAL PACIENTE (puerto 4003) ----
+  client-patient:
+    build: ./client-patient-gesap
+    container_name: gesap-client-patient
+    restart: always
+    ports:
+      - "4003:80"
+    depends_on:
+      - gesap-patient-portal
     networks:
       - gesap-network
 
