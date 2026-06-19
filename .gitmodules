@@ -7,3 +7,12 @@
 [submodule "gesap-patient-portal"]
 	path = gesap-patient-portal
 	url = https://github.com/marcss-bnajera/gesap-patient-portal.git
+[submodule "client-api-gesap"]
+	path = client-api-gesap
+	url = https://github.com/marcss-bnajera/client-api-gesap.git
+[submodule "client-auditor-gesap"]
+	path = client-auditor-gesap
+	url = https://github.com/marcss-bnajera/client-auditor-gesap.git
+[submodule "client-patient-gesap"]
+	path = client-patient-gesap
+	url = https://github.com/marcss-bnajera/client-patient-gesap.git

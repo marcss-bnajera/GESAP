@@ -1,0 +1,52 @@
+# Cloudflare Tunnel — GESAP
+# ─────────────────────────────────────────────────────────────────────────────
+# Dominio único: gesap.lat (un solo hostname, nginx enruta por path)
+#
+# PASOS PARA CONFIGURAR (en el servidor Ubuntu):
+#
+#   1. Instalar cloudflared:
+#        curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+#        echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+#        sudo apt update && sudo apt install cloudflared -y
+#
+#   2. Autenticarse con Cloudflare:
+#        cloudflared tunnel login
+#        (abre el browser, selecciona gesap.lat)
+#
+#   3. Crear el tunnel:
+#        cloudflared tunnel create gesap
+#        (guarda el TUNNEL-ID que te da)
+#
+#   4. Reemplaza <TUNNEL-ID> abajo con el ID real
+#
+#   5. Crear el registro DNS CNAME en Cloudflare (solo uno):
+#        cloudflared tunnel route dns gesap gesap.lat
+#
+#   6. Copiar este archivo al servidor:
+#        sudo mkdir -p /etc/cloudflared
+#        sudo cp cloudflared/config.yml /etc/cloudflared/config.yml
+#
+#   7. Instalar como servicio systemd:
+#        sudo cloudflared service install
+#        sudo systemctl enable cloudflared
+#        sudo systemctl start cloudflared
+#
+# URLs de acceso:
+#   gesap.lat/              → Portal Pacientes
+#   gesap.lat/auditor/      → Portal Auditor
+#   gesap.lat/clinico/      → Portal Clínico (DOCTOR + asistentes)
+#   gesap.lat/medico        → Atajo → /clinico/login
+#   gesap.lat/emergencias   → Atajo → /clinico/emergencias/login
+# ─────────────────────────────────────────────────────────────────────────────
+
+tunnel: <TUNNEL-ID>
+credentials-file: /root/.cloudflared/<TUNNEL-ID>.json
+
+ingress:
+  # Todo el tráfico del dominio entra por nginx en localhost:80
+  # nginx diferencia los portales por path (/auditor/, /clinico/, /)
+  - hostname: gesap.lat
+    service: http://localhost:80
+
+  # Catch-all requerido por cloudflared
+  - service: http_status:404

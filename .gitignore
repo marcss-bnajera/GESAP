@@ -1,5 +1,14 @@
 node_modules/
 dist/
 .env
+.env.prod
 *.log
 .DS_Store
+memoria/
+
+# Frontends compilados (se generan con build-frontends.sh)
+www/
+
+# Credenciales de Cloudflare Tunnel
+cloudflared/*.json
+*.json

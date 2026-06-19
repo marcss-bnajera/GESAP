@@ -1,19 +1,19 @@
 # =============================================
 # GESAP - Docker Compose
-# Levanta PostgreSQL + los 3 servicios
-# Ejecutar: docker compose up --build -d
+# Desarrollo: docker compose up -d
+# Producción: docker compose --env-file .env.prod up -d --build
 # =============================================
 
 services:
-  # ---- BASE DE DATOS ----
+  # ── Base de datos ──────────────────────────────────────────────────────────
   postgres:
     image: postgres:15-alpine
     container_name: gesap-postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: gesap_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-gesap_db}
     ports:
       - "5433:5432"
     volumes:
@@ -22,12 +22,12 @@ services:
     networks:
       - gesap-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # ---- API PRINCIPAL (puerto 3000) ----
+  # ── API principal (puerto 3000) ────────────────────────────────────────────
   gesap-api:
     build: ./gesap-api
     container_name: gesap-api
@@ -35,10 +35,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      PORT: 3000
+      PORT: ${PORT_API:-3000}
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:admin@postgres:5432/gesap_db?schema=public
-      JWT_SECRET: x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-admin}@postgres:5432/${POSTGRES_DB:-gesap_db}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r}
       JWT_EXPIRES_IN: 24h
     depends_on:
       postgres:
@@ -46,7 +46,7 @@ services:
     networks:
       - gesap-network
 
-  # ---- SERVICIO DE AUDITORIA (puerto 3001) ----
+  # ── Servicio de auditoría (puerto 3001) ───────────────────────────────────
   gesap-auditor:
     build: ./gesap-auditor
     container_name: gesap-auditor
@@ -54,10 +54,10 @@ services:
     ports:
       - "3001:3001"
     environment:
-      PORT: 3001
+      PORT: ${PORT_AUDITOR:-3001}
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:admin@postgres:5432/gesap_db?schema=public
-      JWT_SECRET: x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-admin}@postgres:5432/${POSTGRES_DB:-gesap_db}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r}
       JWT_EXPIRES_IN: 24h
     depends_on:
       postgres:
@@ -67,7 +67,7 @@ services:
     networks:
       - gesap-network
 
-  # ---- PORTAL DE PACIENTES (puerto 3002) ----
+  # ── Portal de pacientes (puerto 3002) ─────────────────────────────────────
   gesap-patient-portal:
     build: ./gesap-patient-portal
     container_name: gesap-patient-portal
@@ -75,10 +75,10 @@ services:
     ports:
       - "3002:3002"
     environment:
-      PORT: 3002
+      PORT: ${PORT_PATIENT:-3002}
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:admin@postgres:5432/gesap_db?schema=public
-      JWT_SECRET: x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-admin}@postgres:5432/${POSTGRES_DB:-gesap_db}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-x7K9mP2vQ8nR4wL6jH3cF1bA5dY0uT8sE2gN6iO9pX4zM7kJ5r}
       JWT_EXPIRES_IN: 24h
     depends_on:
       postgres:
@@ -87,6 +87,29 @@ services:
         condition: service_started
     networks:
       - gesap-network
+
+  # ── nginx — sirve frontends + reverse proxy ────────────────────────────────
+  # Solo activo en producción (los frontends deben estar ya compilados en ./www/)
+  # Para compilar: bash scripts/build-frontends.sh
+  nginx:
+    image: nginx:alpine
+    container_name: gesap-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./www/client-api:/var/www/client-api:ro
+      - ./www/client-auditor:/var/www/client-auditor:ro
+      - ./www/client-patient:/var/www/client-patient:ro
+    depends_on:
+      - gesap-api
+      - gesap-auditor
+      - gesap-patient-portal
+    networks:
+      - gesap-network
+    profiles:
+      - production
 
 volumes:
   postgres_data:
