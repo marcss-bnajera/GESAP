@@ -3,6 +3,8 @@
 # Uso:
 #   bash scripts/start.sh              (solo backends)
 #   bash scripts/start.sh --production (backends + nginx)
+#
+# Si existe .env.prod en la raíz del proyecto, se usa automáticamente.
 
 set -e
 
@@ -16,6 +18,16 @@ info() { echo -e "${YELLOW}  → $*${NC}"; }
 
 PRODUCTION=false
 [[ "${1:-}" == "--production" ]] && PRODUCTION=true
+
+# Detectar .env.prod automáticamente
+ENV_FLAG=""
+if [ -f "$ROOT/.env.prod" ]; then
+  ENV_FLAG="--env-file .env.prod"
+  ok "Usando .env.prod"
+fi
+
+# Alias de docker compose con env file incluido
+dc() { docker compose $ENV_FLAG "$@"; }
 
 # ── Verifica que postgres acepta conexiones reales (no solo pg_isready) ────
 check_postgres_auth() {
@@ -31,10 +43,14 @@ wait_postgres() {
         ok "Postgres listo y autenticación OK"
         return 0
       else
-        fail "Postgres responde pero la contraseña no coincide"
+        fail "Postgres responde pero la contraseña no coincide con DATABASE_URL"
         echo ""
-        echo "  Ejecuta esto para corregirlo:"
-        echo "    docker exec -it gesap-postgres psql -U postgres -c \"ALTER USER postgres PASSWORD 'admin';\""
+        echo "  La contraseña en el volumen no coincide con POSTGRES_PASSWORD."
+        echo "  Solución: ejecuta este comando y vuelve a correr el script:"
+        echo ""
+        PG_PASS="${POSTGRES_PASSWORD:-admin}"
+        [ -f "$ROOT/.env.prod" ] && PG_PASS="$(grep '^POSTGRES_PASSWORD=' "$ROOT/.env.prod" | cut -d= -f2)"
+        echo "    docker exec -it gesap-postgres psql -U postgres -c \"ALTER USER postgres PASSWORD '$PG_PASS';\""
         echo ""
         exit 1
       fi
@@ -70,13 +86,13 @@ echo -e "${CYAN}═════════════════════�
 # ── Paso 1: Postgres ────────────────────────────────────────────────────────
 echo ""
 echo "── Base de datos ───────────────────"
-docker compose up -d postgres
+dc up -d postgres
 wait_postgres
 
 # ── Paso 2: Backends ────────────────────────────────────────────────────────
 echo ""
 echo "── Backends ────────────────────────"
-docker compose up -d gesap-api gesap-auditor gesap-patient-portal
+dc up -d gesap-api gesap-auditor gesap-patient-portal
 
 wait_http "gesap-api"            3100
 wait_http "gesap-auditor"        3101
@@ -86,7 +102,7 @@ wait_http "gesap-patient-portal" 3102
 if $PRODUCTION; then
   echo ""
   echo "── Nginx ───────────────────────────"
-  docker compose --profile production up -d nginx
+  dc --profile production up -d nginx
   ok "Nginx levantado en puerto 80"
 fi
 
