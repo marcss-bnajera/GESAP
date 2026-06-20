@@ -21,6 +21,11 @@ services:
     image: postgres:15-alpine
     container_name: gesap-postgres
     restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
@@ -44,6 +49,11 @@ services:
     build: ./gesap-api
     container_name: gesap-api
     restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "3100:3000"
     environment:
@@ -63,6 +73,11 @@ services:
     build: ./gesap-auditor
     container_name: gesap-auditor
     restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "3101:3001"
     environment:
@@ -84,6 +99,11 @@ services:
     build: ./gesap-patient-portal
     container_name: gesap-patient-portal
     restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "3102:3002"
     environment:
@@ -107,6 +127,11 @@ services:
     image: nginx:alpine
     container_name: gesap-nginx
     restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "80:80"
     volumes:
