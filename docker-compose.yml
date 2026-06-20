@@ -26,12 +26,20 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    ulimits:
+      nproc:
+        soft: 512
+        hard: 512
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
       POSTGRES_DB: ${POSTGRES_DB:-gesap_db}
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
@@ -54,8 +62,17 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+    ulimits:
+      nproc:
+        soft: 512
+        hard: 512
     ports:
-      - "3100:3000"
+      - "127.0.0.1:3100:3000"
     environment:
       PORT: ${PORT_API:-3000}
       NODE_ENV: production
@@ -78,8 +95,17 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+    ulimits:
+      nproc:
+        soft: 512
+        hard: 512
     ports:
-      - "3101:3001"
+      - "127.0.0.1:3101:3001"
     environment:
       PORT: ${PORT_AUDITOR:-3001}
       NODE_ENV: production
@@ -104,8 +130,17 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+    ulimits:
+      nproc:
+        soft: 512
+        hard: 512
     ports:
-      - "3102:3002"
+      - "127.0.0.1:3102:3002"
     environment:
       PORT: ${PORT_PATIENT:-3002}
       NODE_ENV: production
