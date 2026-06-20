@@ -33,10 +33,11 @@ services:
     networks:
       - gesap-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-gesap_db}" ]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 10s
 
   # ── API principal (interno: 3000 | host: 3100) ────────────────────────────
   gesap-api:
